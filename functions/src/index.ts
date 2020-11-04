@@ -2,14 +2,15 @@ import * as functions from "firebase-functions";
 import axios from "axios";
 import { createData } from "./createData";
 import memeData from "./data/data.json";
+import memeyData from "./data/data-y.json";
 
-const sendMeme = async () => {
+const sendMeme = async (y: boolean = false) => {
   if (!functions.config().teams.url) return;
 
-  const data = createData(
-    memeData[Math.floor(Math.random() * memeData.length)]
-  );
-  console.log(data);
+  const targetData = y
+    ? memeyData[Math.floor(Math.random() * memeyData.length)]
+    : memeData[Math.floor(Math.random() * memeData.length)];
+  const data = createData(targetData);
   await axios.post(functions.config().teams.url, data, {
     headers: {
       "Contents-Type": "application/json",
@@ -19,6 +20,11 @@ const sendMeme = async () => {
 
 export const meme = functions.https.onRequest(async (request, response) => {
   await sendMeme();
+  response.sendStatus(200);
+});
+
+export const memey = functions.https.onRequest(async (request, response) => {
+  await sendMeme(true);
   response.sendStatus(200);
 });
 

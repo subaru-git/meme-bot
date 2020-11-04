@@ -26,13 +26,13 @@ const createData = ({ title = "", text = "" }) => {
       },
       {
         "@type": "ActionCard",
-        name: "+",
+        name: "y",
         actions: [
           {
             "@type": "HttpPOST",
             name: "+",
             target:
-              "https://us-central1-meme-bot-249d1.cloudfunctions.net/meme",
+              "https://us-central1-meme-bot-249d1.cloudfunctions.net/memey",
           },
         ],
       },
