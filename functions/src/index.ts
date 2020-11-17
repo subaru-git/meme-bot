@@ -1,16 +1,21 @@
 import * as functions from "firebase-functions";
-import axios from "axios";
+import * as admin from "firebase-admin";
 import { createData } from "./createData";
-import memeData from "./data/data.json";
-import memeyData from "./data/data-y.json";
+import axios from "axios";
+
+admin.initializeApp();
 
 const sendMeme = async (y: boolean = false) => {
   if (!functions.config().teams.url) return;
 
-  const targetData = y
-    ? memeyData[Math.floor(Math.random() * memeyData.length)]
-    : memeData[Math.floor(Math.random() * memeData.length)];
-  const data = createData(targetData);
+  const target = y ? "yoshi" : "main";
+  const count = await admin.database().ref(`/${target}/count`).once("value");
+  const index = Math.floor(Math.random() * count.val());
+  const ref = await admin
+    .database()
+    .ref(`/${target}/data/${index}`)
+    .once("value");
+  const data = createData(ref.val());
   await axios.post(functions.config().teams.url, data, {
     headers: {
       "Contents-Type": "application/json",
